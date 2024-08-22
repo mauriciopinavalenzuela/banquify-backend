@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Transaccion } from './entities/transacciones.entity';
-import { CreateTransaccionDto } from './dto/create-transacciones.dto';  
+import { CreateTransaccionDto } from './dto/create-transacciones.dto';
 
 @Injectable()
 export class TransaccionesService {
@@ -8,14 +8,10 @@ export class TransaccionesService {
   private id = 1;
 
   crearTransaccion(createTransaccionDto: CreateTransaccionDto): Transaccion {
-    const nuevaTransaccion = new Transaccion(
-      this.id++,
-      createTransaccionDto.monto,
-      createTransaccionDto.tipo,
-      new Date(),
-      createTransaccionDto.emisor,
-      createTransaccionDto.receptor
-    );
+    const nuevaTransaccion = new Transaccion({
+      ...createTransaccionDto,
+      id: this.id++, 
+    });
     this.transacciones.push(nuevaTransaccion);
     return nuevaTransaccion;
   }
