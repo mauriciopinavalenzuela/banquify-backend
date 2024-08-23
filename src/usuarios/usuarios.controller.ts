@@ -4,7 +4,7 @@ import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
 import { Response } from 'express';
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { CreateTransaccionDto } from 'transacciones/dto/create-transacciones.dto';
 
 @ApiTags('usuarios')
@@ -16,7 +16,10 @@ export class UsuariosController {
   @ApiOperation({ summary: 'Crear Usuario' })
   @ApiResponse({ status: 201, description: 'Usuario creado exitosamente.' })
   @ApiResponse({ status: 400, description: 'Error al crear el usuario.' })
-  crear(@Body() createUsuarioDto: CreateUsuarioDto, @Res() response: Response) {
+  crear(
+    @Body() createUsuarioDto: CreateUsuarioDto, 
+    @Res() response: Response
+  ) {
     const usuario = this.usuariosService.crearUsuario(createUsuarioDto);
     if (usuario) {
       response.status(201).send(usuario);
@@ -29,7 +32,10 @@ export class UsuariosController {
   @ApiOperation({ summary: 'Obtener Usuario según id' })
   @ApiResponse({ status: 200, description: 'Usuario encontrado.' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  obtenerPorId(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
+  obtenerPorId(
+    @Param('id', ParseIntPipe) id: number, 
+    @Res() response: Response
+  ) {
     const usuario = this.usuariosService.obtenerUsuario(id);
     if (usuario) {
       response.status(200).send(usuario);
@@ -40,10 +46,10 @@ export class UsuariosController {
 
   @Get()
   @ApiOperation({ summary: 'Obtener todos los usuarios' })
+  @ApiQuery({ name: 'nombre', required: false, description: 'Filtrar por nombre de usuario' })
   @ApiResponse({ status: 200, description: 'Lista de usuarios.' })
-  obtenerTodos(@Query('nombre') nombre: string, @Res() response: Response) {
-    const usuarios = this.usuariosService.obtenerTodosUsuarios(nombre);
-    response.status(200).send(usuarios);
+  obtenerTodos(@Query('nombre') nombre?: string): Usuario[] {
+    return this.usuariosService.obtenerTodosUsuarios(nombre);
   }
 
   @Put(':id')
@@ -51,7 +57,11 @@ export class UsuariosController {
   @ApiResponse({ status: 200, description: 'Usuario actualizado.' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
   @ApiResponse({ status: 400, description: 'Correo electrónico ya en uso.' })
-  actualizar(@Param('id', ParseIntPipe) id: number, @Body() updateData: UpdateUsuarioDto, @Res() response: Response) {
+  actualizar(
+    @Param('id', ParseIntPipe) id: number, 
+    @Body() updateData: UpdateUsuarioDto, 
+    @Res() response: Response
+  ) {
     const usuario = this.usuariosService.actualizarUsuario(id, updateData);
     if (usuario) {
       response.status(200).send(usuario);
@@ -69,7 +79,10 @@ export class UsuariosController {
   @ApiOperation({ summary: 'Eliminar Usuario por id' })
   @ApiResponse({ status: 200, description: 'Usuario eliminado.' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  eliminar(@Param('id', ParseIntPipe) id: number, @Res() response: Response) {
+  eliminar(
+    @Param('id', ParseIntPipe) id: number, 
+    @Res() response: Response
+  ) {
     const resultado = this.usuariosService.eliminarUsuario(id);
     if (resultado) {
       response.status(200).send({ message: 'Usuario eliminado' });
@@ -86,7 +99,10 @@ export class UsuariosController {
   @ApiResponse({ status: 400, description: 'Error en la transferencia.' })
   @ApiResponse({ status: 404, description: 'Usuario o cuenta no encontrada.' })
   @ApiResponse({ status: 500, description: 'Saldo insuficiente.' })
-  realizarTransferencia(@Body() transferenciaDto: CreateTransaccionDto, @Res() response: Response) {
+  realizarTransferencia(
+    @Body() transferenciaDto: CreateTransaccionDto, 
+    @Res() response: Response
+  ) {
     const resultado = this.usuariosService.realizarTransferencia(transferenciaDto);
     if (resultado.success) {
       response.status(200).send(resultado.message);
@@ -100,7 +116,10 @@ export class UsuariosController {
   @ApiResponse({ status: 200, description: 'Abono realizado con éxito.' })
   @ApiResponse({ status: 400, description: 'Error en el abono.' })
   @ApiResponse({ status: 404, description: 'Usuario o cuenta no encontrada.' })
-  realizarAbono(@Body() abonoDto: CreateTransaccionDto, @Res() response: Response) {
+  realizarAbono(
+    @Body() abonoDto: CreateTransaccionDto, 
+    @Res() response: Response
+  ) {
     const resultado = this.usuariosService.realizarAbono(abonoDto);
     if (resultado.success) {
       response.status(200).send(resultado.message);
@@ -115,7 +134,10 @@ export class UsuariosController {
   @ApiResponse({ status: 400, description: 'Error en el retiro.' })
   @ApiResponse({ status: 404, description: 'Usuario o cuenta no encontrada.' })
   @ApiResponse({ status: 500, description: 'Saldo insuficiente.' })
-  realizarRetiro(@Body() retiroDto: CreateTransaccionDto, @Res() response: Response) {
+  realizarRetiro(
+    @Body() retiroDto: CreateTransaccionDto, 
+    @Res() response: Response
+  ) {
     const resultado = this.usuariosService.realizarRetiro(retiroDto);
     if (resultado.success) {
       response.status(200).send(resultado.message);
@@ -140,6 +162,4 @@ export class UsuariosController {
       response.status(404).send({ error: 'Usuario o cuenta no encontrada.' });
     }
   }
-
-
 }

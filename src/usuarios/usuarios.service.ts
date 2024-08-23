@@ -32,8 +32,11 @@ export class UsuariosService {
     return this.usuarios.find(user => user.id === id) || null;
   }
 
-  obtenerTodosUsuarios(nombre: string): Usuario[] {
-    return this.usuarios.filter(user => !nombre || user.nombre.includes(nombre));
+  obtenerTodosUsuarios(nombre?: string): Usuario[] {
+    if (nombre) {
+      return this.usuarios.filter(user => user.nombre.includes(nombre));
+    }
+    return this.usuarios;
   }
 
   actualizarUsuario(id: number, datosActualizacion: UpdateUsuarioDto): Usuario | null {
@@ -155,6 +158,4 @@ export class UsuariosService {
     }
     return usuario.cuentaVista.historialTransacciones;
   }
-
-  
 }
